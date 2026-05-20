@@ -30,37 +30,53 @@ nltk.download("punkt_tab")
 # SIMPLE LOGIN SYSTEM
 # =====================================================
 
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if "user_role" not in st.session_state:
+    st.session_state.user_role = ""
+
 st.sidebar.title("🔐 Login")
 
-username = st.sidebar.text_input("Username")
+if not st.session_state.authenticated:
 
-password = st.sidebar.text_input(
-    "Password",
-    type="password"
-)
+    username = st.sidebar.text_input("Username")
 
-login_button = st.sidebar.button("Login")
+    password = st.sidebar.text_input(
+        "Password",
+        type="password"
+    )
 
-authenticated = False
+    login_button = st.sidebar.button("Login")
 
-if login_button:
+    if login_button:
 
-    if username == "admin" and password == "admin123":
-        authenticated = True
-        st.sidebar.success("Welcome Admin 😎")
+        if username == "admin" and password == "admin123":
+            st.session_state.authenticated = True
+            st.session_state.user_role = "Admin"
+            st.rerun()
 
-    elif username == "moderator" and password == "mod123":
-        authenticated = True
-        st.sidebar.success("Welcome Moderator 😎")
+        elif username == "moderator" and password == "mod123":
+            st.session_state.authenticated = True
+            st.session_state.user_role = "Moderator"
+            st.rerun()
 
-    else:
-        st.sidebar.error("Invalid Username or Password")
+        else:
+            st.sidebar.error("Invalid Username or Password")
+
+else:
+    st.sidebar.success(f"Welcome {st.session_state.user_role} 😎")
+
+    if st.sidebar.button("Logout"):
+        st.session_state.authenticated = False
+        st.session_state.user_role = ""
+        st.rerun()
 
 # =====================================================
 # SHOW APP ONLY AFTER LOGIN
 # =====================================================
 
-if authenticated:
+if st.session_state.authenticated:
 
     # =====================================================
     # CUSTOM CSS
