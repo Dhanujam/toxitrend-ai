@@ -344,10 +344,10 @@ if st.session_state.authenticated:
     menu = st.sidebar.radio(
         "",
         [
-            "💬 Single Comment Analysis",
-            "📊 CSV Analysis",
-            "🌍 Reddit Analysis",
-            "🎥 YouTube Analysis"
+            "Single Comment Analysis",
+            "CSV Analysis",
+            "Reddit Analysis",
+            "YouTube Analysis"
         ]
     )
 
@@ -544,7 +544,7 @@ if st.session_state.authenticated:
     # SINGLE COMMENT ANALYSIS
     # =====================================================
 
-    if menu == "💬 Single Comment Analysis":
+    if menu == "Single Comment Analysis":
 
         st.markdown("""
         <div class="main-card">
@@ -653,7 +653,7 @@ if st.session_state.authenticated:
     # CSV ANALYSIS
     # =====================================================
 
-    if menu == "📊 CSV Analysis":
+    if menu == "CSV Analysis":
 
         st.markdown("""
         <div class="main-card">
@@ -694,7 +694,7 @@ if st.session_state.authenticated:
     # REDDIT ANALYSIS
     # =====================================================
 
-    if menu == "🌍 Reddit Analysis":
+    if menu == "Reddit Analysis":
 
         st.markdown("""
         <div class="main-card">
@@ -741,7 +741,7 @@ if st.session_state.authenticated:
     # YOUTUBE ANALYSIS
     # =====================================================
 
-    if menu == "🎥 YouTube Analysis":
+    if menu == "YouTube Analysis":
 
         st.markdown("""
         <div class="main-card">
