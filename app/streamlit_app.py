@@ -359,7 +359,7 @@ if st.session_state.authenticated:
     </div>
 
     <div class="footer">
-        Made with ❤️ by <span>Dhanuja</span>
+        Made by <span>Dhanuja</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -819,7 +819,7 @@ if st.session_state.authenticated:
     st.markdown(
         """
         <p style='text-align:center; color:gray;'>
-        <span style='color:#ff4b4b; font-weight:800;'>ToxiTrend AI</span> | Made with ❤️ by Dhanuja
+        <span style='color:#ff4b4b; font-weight:800;'>ToxiTrend AI</span> | Made by Dhanuja
         </p>
         """,
         unsafe_allow_html=True
