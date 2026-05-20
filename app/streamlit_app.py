@@ -78,8 +78,8 @@ tfidf = pickle.load(open("models/tfidf_vectorizer.pkl", "rb"))
 # =====================================================
 # YOUTUBE API
 # =====================================================
-
-API_KEY = "AIzaSyClJtt_18wQTyUD-ZtU6leVB5vU-DHz-8E"
+import os
+API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 youtube = build(
     "youtube",
