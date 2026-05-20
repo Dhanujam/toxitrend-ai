@@ -110,6 +110,14 @@ Deployed using:
 * Supabase Authentication
 
 ---
+
+## Live Demo
+
+Streamlit App: https://toxitrend-ai.streamlit.app/
+
+GitHub Repository: https://github.com/Dhanujam/toxitrend-ai
+
+---
 ## Author
 
 Dhanuja M
