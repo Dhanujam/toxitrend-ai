@@ -1,16 +1,19 @@
 import streamlit as st
 import pickle
 import re
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-import plotly.express as px
-import pandas as pd
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-from collections import Counter
-from googleapiclient.discovery import build
 import os
 import nltk
+import plotly.express as px
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from wordcloud import WordCloud
+from collections import Counter
+from googleapiclient.discovery import build
+from supabase import create_client, Client
+
 # =====================================================
 # PAGE CONFIG
 # =====================================================
@@ -21,57 +24,107 @@ st.set_page_config(
     layout="wide"
 )
 
+# =====================================================
+# NLTK DOWNLOADS
+# =====================================================
 
 nltk.download("stopwords")
 nltk.download("punkt")
 nltk.download("punkt_tab")
 
 # =====================================================
-# SIMPLE LOGIN SYSTEM
+# SUPABASE CONNECTION
+# =====================================================
+
+SUPABASE_URL = st.secrets.get("SUPABASE_URL", os.getenv("SUPABASE_URL"))
+SUPABASE_KEY = st.secrets.get("SUPABASE_KEY", os.getenv("SUPABASE_KEY"))
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# =====================================================
+# SESSION STATE
 # =====================================================
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-if "user_role" not in st.session_state:
-    st.session_state.user_role = ""
+if "user_email" not in st.session_state:
+    st.session_state.user_email = ""
+
+# =====================================================
+# REAL AUTHENTICATION
+# =====================================================
 
 if not st.session_state.authenticated:
 
-    st.title("🔐 Login to ToxiTrend AI")
+    st.title("🔐 ToxiTrend AI Authentication")
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    auth_choice = st.selectbox(
+        "Choose Option",
+        ["Login", "Signup"]
+    )
 
-    if st.button("Login"):
+    email = st.text_input("Email")
 
-        if username == "admin" and password == "admin123":
-            st.session_state.authenticated = True
-            st.session_state.user_role = "Admin"
-            st.rerun()
+    password = st.text_input(
+        "Password",
+        type="password"
+    )
 
-        elif username == "moderator" and password == "mod123":
-            st.session_state.authenticated = True
-            st.session_state.user_role = "Moderator"
-            st.rerun()
+    if auth_choice == "Signup":
 
-        else:
-            st.error("Invalid username or password")
+        if st.button("Create Account"):
 
-else:
+            if email.strip() == "" or password.strip() == "":
+                st.warning("Please enter email and password.")
 
-    st.sidebar.success(f"Welcome {st.session_state.user_role} 😎")
+            else:
+                try:
+                    supabase.auth.sign_up({
+                        "email": email,
+                        "password": password
+                    })
 
-    if st.sidebar.button("Logout"):
-        st.session_state.authenticated = False
-        st.session_state.user_role = ""
-        st.rerun()
+                    st.success("Account created successfully. Now login with your email and password.")
+
+                except Exception as e:
+                    st.error(f"Signup Error: {e}")
+
+    elif auth_choice == "Login":
+
+        if st.button("Login"):
+
+            if email.strip() == "" or password.strip() == "":
+                st.warning("Please enter email and password.")
+
+            else:
+                try:
+                    user = supabase.auth.sign_in_with_password({
+                        "email": email,
+                        "password": password
+                    })
+
+                    st.session_state.authenticated = True
+                    st.session_state.user_email = email
+
+                    st.success("Login successful.")
+                    st.rerun()
+
+                except Exception as e:
+                    st.error(f"Login Error: {e}")
 
 # =====================================================
 # SHOW APP ONLY AFTER LOGIN
 # =====================================================
 
 if st.session_state.authenticated:
+
+    st.sidebar.success(f"Logged in as {st.session_state.user_email}")
+
+    if st.sidebar.button("Logout"):
+        st.session_state.authenticated = False
+        st.session_state.user_email = ""
+        st.rerun()
 
     # =====================================================
     # CUSTOM CSS
@@ -132,7 +185,7 @@ if st.session_state.authenticated:
     # YOUTUBE API
     # =====================================================
 
-    API_KEY = os.getenv("YOUTUBE_API_KEY")
+    API_KEY = st.secrets.get("YOUTUBE_API_KEY", os.getenv("YOUTUBE_API_KEY"))
 
     youtube = build(
         "youtube",
