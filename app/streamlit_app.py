@@ -9,7 +9,12 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from collections import Counter
 from googleapiclient.discovery import build
+import os
+import nltk
 
+nltk.download("stopwords")
+nltk.download("punkt")
+nltk.download("punkt_tab")
 # =====================================================
 # PAGE CONFIG
 # =====================================================
@@ -78,7 +83,7 @@ tfidf = pickle.load(open("models/tfidf_vectorizer.pkl", "rb"))
 # =====================================================
 # YOUTUBE API
 # =====================================================
-import os
+
 API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 youtube = build(
