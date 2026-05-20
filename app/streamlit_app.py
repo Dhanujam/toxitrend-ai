@@ -418,7 +418,7 @@ if youtube_button:
             request = youtube.commentThreads().list(
                 part="snippet",
                 videoId=video_id,
-                maxResults=50,
+                maxResults=100,
                 textFormat="plainText"
             )
 
