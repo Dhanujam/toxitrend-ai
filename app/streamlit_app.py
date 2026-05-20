@@ -11,7 +11,6 @@ from collections import Counter
 from googleapiclient.discovery import build
 import os
 import nltk
-import streamlit_authenticator as stauth
 # =====================================================
 # PAGE CONFIG
 # =====================================================
@@ -28,44 +27,40 @@ nltk.download("punkt")
 nltk.download("punkt_tab")
 
 # =====================================================
-# USER AUTHENTICATION
+# SIMPLE LOGIN SYSTEM
 # =====================================================
 
-credentials = {
-    "usernames": {
-        "admin": {
-            "name": "Admin",
-            "password": "admin123"
-        },
-        "moderator": {
-            "name": "Moderator",
-            "password": "mod123"
-        }
-    }
-}
+st.sidebar.title("🔐 Login")
 
-authenticator = stauth.Authenticate(
-    credentials,
-    "toxitrend_cookie",
-    "abcdef",
-    cookie_expiry_days=1\
+username = st.sidebar.text_input("Username")
+
+password = st.sidebar.text_input(
+    "Password",
+    type="password"
 )
 
-name, authentication_status, username = authenticator.login(
-    location="main"
-)
+login_button = st.sidebar.button("Login")
 
-if authentication_status == False:
-    st.error("Incorrect username or password")
+authenticated = False
 
-elif authentication_status == None:
-    st.warning("Please enter your login credentials")
+if login_button:
 
-elif authentication_status:
+    if username == "admin" and password == "admin123":
+        authenticated = True
+        st.sidebar.success("Welcome Admin 😎")
 
-    authenticator.logout("Logout", "sidebar")
+    elif username == "moderator" and password == "mod123":
+        authenticated = True
+        st.sidebar.success("Welcome Moderator 😎")
 
-    st.sidebar.success(f"Welcome {name}")
+    else:
+        st.sidebar.error("Invalid Username or Password")
+
+# =====================================================
+# SHOW APP ONLY AFTER LOGIN
+# =====================================================
+
+if authenticated:
 
     # =====================================================
     # CUSTOM CSS
