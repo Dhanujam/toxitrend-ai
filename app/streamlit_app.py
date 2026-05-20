@@ -39,10 +39,7 @@ nltk.download("punkt_tab")
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 
-supabase: Client = create_client(
-    SUPABASE_URL,
-    SUPABASE_KEY
-)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # =====================================================
 # SESSION STATE
@@ -59,6 +56,32 @@ if "user_email" not in st.session_state:
 # =====================================================
 
 if not st.session_state.authenticated:
+
+    st.markdown("""
+    <style>
+    .stApp {
+        background: radial-gradient(circle at top, #111827 0%, #05070d 45%, #02040a 100%);
+        color: white;
+    }
+
+    .stButton button {
+        background: linear-gradient(135deg, #ff4b4b, #ff1e1e);
+        color: white;
+        border-radius: 14px;
+        border: none;
+        height: 3.2em;
+        font-weight: 800;
+        box-shadow: 0 0 20px rgba(255, 75, 75, 0.25);
+    }
+
+    .stTextInput input {
+        background-color: #151822 !important;
+        color: white !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
 
@@ -86,10 +109,6 @@ if not st.session_state.authenticated:
             type="password"
         )
 
-        # =====================================================
-        # SIGNUP
-        # =====================================================
-
         if auth_choice == "Signup":
 
             if st.button("Create Account"):
@@ -99,22 +118,16 @@ if not st.session_state.authenticated:
 
                 else:
                     try:
-
                         with st.spinner("Creating account..."):
-
                             supabase.auth.sign_up({
                                 "email": email,
                                 "password": password
                             })
 
-                        st.success("Account created successfully 😎")
+                        st.success("Account created successfully. Now login 😎")
 
                     except Exception as e:
                         st.error(f"Signup Error: {e}")
-
-        # =====================================================
-        # LOGIN
-        # =====================================================
 
         elif auth_choice == "Login":
 
@@ -125,9 +138,7 @@ if not st.session_state.authenticated:
 
                 else:
                     try:
-
                         with st.spinner("Logging in..."):
-
                             supabase.auth.sign_in_with_password({
                                 "email": email,
                                 "password": password
@@ -135,9 +146,6 @@ if not st.session_state.authenticated:
 
                         st.session_state.authenticated = True
                         st.session_state.user_email = email
-
-                        st.success("Login successful 😎")
-
                         st.rerun()
 
                     except Exception as e:
@@ -149,73 +157,210 @@ if not st.session_state.authenticated:
 
 if st.session_state.authenticated:
 
-    st.sidebar.success(f"Logged in as {st.session_state.user_email}")
-
-    if st.sidebar.button("Logout"):
-        st.session_state.authenticated = False
-        st.session_state.user_email = ""
-        st.rerun()
-
     # =====================================================
-    # SIDEBAR NAVIGATION
-    # =====================================================
-
-    menu = st.sidebar.radio(
-        "📌 Navigation",
-        [
-            "Single Comment Analysis",
-            "CSV Analysis",
-            "Reddit Analysis",
-            "YouTube Analysis"
-        ]
-    )
-
-    # =====================================================
-    # CUSTOM CSS
+    # PREMIUM DARK UI CSS
     # =====================================================
 
     st.markdown("""
     <style>
-    .main {
-        background-color: #0E1117;
+
+    .stApp {
+        background: radial-gradient(circle at top, #111827 0%, #05070d 45%, #02040a 100%);
         color: white;
     }
 
-    h1, h2, h3 {
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #070b14 0%, #0b1020 100%);
+        border-right: 1px solid rgba(255, 75, 75, 0.25);
+    }
+
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label {
+        color: white !important;
+    }
+
+    .sidebar-logo {
+        padding: 22px;
+        border-bottom: 1px solid rgba(255, 75, 75, 0.5);
+        margin-bottom: 25px;
+    }
+
+    .brand-title {
+        font-size: 30px;
+        font-weight: 900;
         color: white;
     }
 
-    .stTextArea textarea {
-        background-color: #262730;
-        color: white;
-        border-radius: 12px;
-        font-size: 16px;
+    .brand-title span {
+        color: #ff4b4b;
+    }
+
+    .brand-subtitle {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .user-card {
+        background: rgba(255, 75, 75, 0.08);
+        border: 1px solid rgba(255, 75, 75, 0.35);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 0 25px rgba(255, 75, 75, 0.08);
+    }
+
+    .user-email {
+        color: #ff5b5b;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .auth-badge {
+        display: inline-block;
+        background: rgba(0, 200, 83, 0.15);
+        color: #00c853;
+        border: 1px solid rgba(0, 200, 83, 0.4);
+        padding: 7px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        margin-top: 12px;
     }
 
     .stButton button {
-        width: 100%;
-        background-color: #ff4b4b;
+        background: linear-gradient(135deg, #ff4b4b, #ff1e1e);
         color: white;
-        border-radius: 12px;
-        height: 3em;
-        font-size: 18px;
+        border-radius: 14px;
         border: none;
+        height: 3.2em;
+        font-weight: 800;
+        box-shadow: 0 0 20px rgba(255, 75, 75, 0.25);
     }
 
     .stButton button:hover {
-        background-color: #ff1e1e;
+        background: linear-gradient(135deg, #ff1e1e, #b00020);
         color: white;
+        transform: scale(1.01);
+    }
+
+    div[role="radiogroup"] label {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.09);
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 10px;
+        transition: 0.2s;
+    }
+
+    div[role="radiogroup"] label:hover {
+        border-color: #ff4b4b;
+        background: rgba(255, 75, 75, 0.08);
+    }
+
+    .main-card {
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 22px;
+        padding: 28px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.35);
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 36px;
+        font-weight: 900;
+        color: #ffffff;
+    }
+
+    .section-subtitle {
+        color: #9ca3af;
+        font-size: 17px;
+        margin-bottom: 20px;
+    }
+
+    .stTextArea textarea,
+    .stTextInput input {
+        background-color: #151822 !important;
+        color: white !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
     }
 
     .result-box {
-        padding: 20px;
-        border-radius: 12px;
+        padding: 24px;
+        border-radius: 18px;
         text-align: center;
         font-size: 22px;
         font-weight: bold;
         margin-top: 20px;
+        box-shadow: 0 0 25px rgba(255, 75, 75, 0.15);
     }
+
+    .footer {
+        text-align: center;
+        color: #9ca3af;
+        padding: 25px;
+    }
+
+    .footer span {
+        color: #ff4b4b;
+        font-weight: 800;
+    }
+
     </style>
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # PREMIUM SIDEBAR
+    # =====================================================
+
+    st.sidebar.markdown("""
+    <div class="sidebar-logo">
+        <div class="brand-title">🤖 ToxiTrend <span>AI</span></div>
+        <div class="brand-subtitle">AI-Powered Moderation</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.sidebar.markdown(
+        f"""
+        <div class="user-card">
+            <p>Welcome back,</p>
+            <div class="user-email">{st.session_state.user_email}</div>
+            <div class="auth-badge">🛡️ Authenticated</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if st.sidebar.button("↪ Logout"):
+        st.session_state.authenticated = False
+        st.session_state.user_email = ""
+        st.rerun()
+
+    st.sidebar.markdown("### 📌 NAVIGATION")
+
+    menu = st.sidebar.radio(
+        "",
+        [
+            "💬 Single Comment Analysis",
+            "📊 CSV Analysis",
+            "🌍 Reddit Analysis",
+            "🎥 YouTube Analysis"
+        ]
+    )
+
+    st.sidebar.markdown("""
+    <div class="user-card">
+        <h3>🛡️ ToxiTrend AI</h3>
+        <p style="color:#9ca3af;">Detect. Analyze. Protect.</p>
+        <p style="color:#9ca3af;">Building a safer digital community.</p>
+    </div>
+
+    <div class="footer">
+        Made with ❤️ by <span>Dhanuja</span>
+    </div>
     """, unsafe_allow_html=True)
 
     # =====================================================
@@ -359,8 +504,28 @@ if st.session_state.authenticated:
                 use_container_width=True
             )
 
+        else:
+            st.warning("No toxic keywords found.")
+
+        st.subheader("🚩 Flagged Comments for Moderator Review")
+
+        flagged_df = df[df["Flag Status"] == "🚩 Flagged Comment"]
+
+        if not flagged_df.empty:
+            st.dataframe(
+                flagged_df[
+                    [
+                        "comment_text",
+                        "Toxicity Score",
+                        "Flag Status"
+                    ]
+                ]
+            )
+        else:
+            st.success("No comments crossed the 90% flagging threshold.")
+
     # =====================================================
-    # TITLE
+    # MAIN TITLE
     # =====================================================
 
     st.markdown(
@@ -369,7 +534,7 @@ if st.session_state.authenticated:
     )
 
     st.markdown(
-        "<p style='text-align:center; color:gray;'>AI-Powered Toxicity Detection Dashboard</p>",
+        "<p style='text-align:center; color:gray;'>AI-Powered Toxicity Detection, Flagging & Trend Analysis Dashboard</p>",
         unsafe_allow_html=True
     )
 
@@ -379,16 +544,22 @@ if st.session_state.authenticated:
     # SINGLE COMMENT ANALYSIS
     # =====================================================
 
-    if menu == "Single Comment Analysis":
+    if menu == "💬 Single Comment Analysis":
 
-        st.subheader("📝 Single Comment Analysis")
+        st.markdown("""
+        <div class="main-card">
+            <div class="section-title">💬 Single Comment Analysis</div>
+            <div class="section-subtitle">Analyze the toxicity of any comment in real-time</div>
+        </div>
+        """, unsafe_allow_html=True)
 
         user_input = st.text_area(
             "Enter a comment",
-            height=150
+            height=150,
+            placeholder="Type or paste your comment here..."
         )
 
-        analyze_comment = st.button("Analyze Comment")
+        analyze_comment = st.button("🔍 Analyze Comment")
 
         if analyze_comment:
 
@@ -414,7 +585,8 @@ if st.session_state.authenticated:
                                 f"""
                                 <div class='result-box' style='background-color:#b00020;'>
                                 🚩 Flagged Toxic Comment<br><br>
-                                Toxicity Score: {toxicity_score:.2f}%
+                                Toxicity Score: {toxicity_score:.2f}%<br>
+                                Status: Needs Moderator Review
                                 </div>
                                 """,
                                 unsafe_allow_html=True
@@ -426,7 +598,8 @@ if st.session_state.authenticated:
                                 f"""
                                 <div class='result-box' style='background-color:#ff4b4b;'>
                                 🚨 Toxic Comment Detected<br><br>
-                                Toxicity Score: {toxicity_score:.2f}%
+                                Toxicity Score: {toxicity_score:.2f}%<br>
+                                Status: Toxic but Not Flagged
                                 </div>
                                 """,
                                 unsafe_allow_html=True
@@ -438,26 +611,63 @@ if st.session_state.authenticated:
                             f"""
                             <div class='result-box' style='background-color:#00C853;'>
                             ✅ Non-Toxic Comment<br><br>
-                            Toxicity Score: {toxicity_score:.2f}%
+                            Toxicity Score: {toxicity_score:.2f}%<br>
+                            Status: Safe Comment
                             </div>
                             """,
                             unsafe_allow_html=True
                         )
 
+                    chart_data = pd.DataFrame({
+                        "Category": ["Non-Toxic", "Toxic"],
+                        "Score": [1 - probability, probability]
+                    })
+
+                    fig = px.bar(
+                        chart_data,
+                        x="Category",
+                        y="Score",
+                        title="Toxicity Analysis"
+                    )
+
+                    st.plotly_chart(fig, use_container_width=True)
+
+                    st.subheader("☁️ Word Cloud")
+
+                    if cleaned.strip() != "":
+                        wordcloud = WordCloud(
+                            width=800,
+                            height=400,
+                            background_color="black"
+                        ).generate(cleaned)
+
+                        fig_wc, ax = plt.subplots(figsize=(10, 5))
+                        ax.imshow(wordcloud, interpolation="bilinear")
+                        ax.axis("off")
+                        st.pyplot(fig_wc)
+
+                else:
+                    st.warning("Please enter a comment.")
+
     # =====================================================
     # CSV ANALYSIS
     # =====================================================
 
-    if menu == "CSV Analysis":
+    if menu == "📊 CSV Analysis":
 
-        st.subheader("📁 CSV Toxicity Analysis")
+        st.markdown("""
+        <div class="main-card">
+            <div class="section-title">📊 CSV Toxicity Analysis</div>
+            <div class="section-subtitle">Upload a CSV file and analyze multiple comments at once</div>
+        </div>
+        """, unsafe_allow_html=True)
 
         uploaded_file = st.file_uploader(
             "Upload CSV file with column name 'comment_text'",
             type=["csv"]
         )
 
-        csv_button = st.button("Analyze CSV File")
+        csv_button = st.button("📊 Analyze CSV File")
 
         if uploaded_file is not None and csv_button:
 
@@ -484,16 +694,22 @@ if st.session_state.authenticated:
     # REDDIT ANALYSIS
     # =====================================================
 
-    if menu == "Reddit Analysis":
+    if menu == "🌍 Reddit Analysis":
 
-        st.subheader("🌍 Manual Reddit Comment Analyzer")
+        st.markdown("""
+        <div class="main-card">
+            <div class="section-title">🌍 Reddit Comment Analyzer</div>
+            <div class="section-subtitle">Paste Reddit-style comments and detect toxic patterns</div>
+        </div>
+        """, unsafe_allow_html=True)
 
         reddit_input = st.text_area(
-            "Paste Reddit comments here",
-            height=250
+            "Paste Reddit comments here, one comment per line",
+            height=250,
+            placeholder="Paste comments here..."
         )
 
-        reddit_button = st.button("Analyze Reddit Comments")
+        reddit_button = st.button("🌍 Analyze Reddit Comments")
 
         if reddit_button:
 
@@ -505,31 +721,42 @@ if st.session_state.authenticated:
                     if comment.strip() != ""
                 ]
 
-                reddit_df = pd.DataFrame({
-                    "comment_text": reddit_comments
-                })
+                if len(reddit_comments) > 0:
 
-                reddit_df = analyze_dataframe(reddit_df)
+                    reddit_df = pd.DataFrame({
+                        "comment_text": reddit_comments
+                    })
 
-                show_dashboard(
-                    reddit_df,
-                    "📊 Reddit Dashboard"
-                )
+                    reddit_df = analyze_dataframe(reddit_df)
+
+                    show_dashboard(
+                        reddit_df,
+                        "📊 Reddit Dashboard"
+                    )
+
+                else:
+                    st.warning("Please paste at least one comment.")
 
     # =====================================================
     # YOUTUBE ANALYSIS
     # =====================================================
 
-    if menu == "YouTube Analysis":
+    if menu == "🎥 YouTube Analysis":
 
-        st.subheader("🎥 YouTube Comment Analyzer")
+        st.markdown("""
+        <div class="main-card">
+            <div class="section-title">🎥 YouTube Comment Analyzer</div>
+            <div class="section-subtitle">Fetch live YouTube comments and analyze toxicity</div>
+        </div>
+        """, unsafe_allow_html=True)
 
         video_id = st.text_input(
-            "Enter YouTube Video ID"
+            "Enter YouTube Video ID",
+            placeholder="Example: dQw4w9WgXcQ"
         )
 
         youtube_button = st.button(
-            "Analyze YouTube Comments"
+            "🎥 Analyze YouTube Comments"
         )
 
         if youtube_button:
@@ -563,16 +790,21 @@ if st.session_state.authenticated:
 
                         comments.append(comment)
 
-                    youtube_df = pd.DataFrame({
-                        "comment_text": comments
-                    })
+                    if len(comments) > 0:
 
-                    youtube_df = analyze_dataframe(youtube_df)
+                        youtube_df = pd.DataFrame({
+                            "comment_text": comments
+                        })
 
-                    show_dashboard(
-                        youtube_df,
-                        "📊 YouTube Dashboard"
-                    )
+                        youtube_df = analyze_dataframe(youtube_df)
+
+                        show_dashboard(
+                            youtube_df,
+                            "📊 YouTube Dashboard"
+                        )
+
+                    else:
+                        st.warning("No comments found for this video.")
 
                 except Exception as e:
 
@@ -587,7 +819,7 @@ if st.session_state.authenticated:
     st.markdown(
         """
         <p style='text-align:center; color:gray;'>
-        Made by Dhanuja | ToxiTrend AI
+        <span style='color:#ff4b4b; font-weight:800;'>ToxiTrend AI</span> | Made with ❤️ by Dhanuja
         </p>
         """,
         unsafe_allow_html=True
