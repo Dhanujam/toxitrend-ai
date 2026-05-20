@@ -31,23 +31,19 @@ nltk.download("punkt_tab")
 # USER AUTHENTICATION
 # =====================================================
 
-names = ["Admin", "Moderator"]
-
-usernames = ["admin", "moderator"]
-
-passwords = ["admin123", "mod123"]
-
-hashed_passwords = stauth.Hasher.hash_passwords(passwords)
-
 credentials = {
     "usernames": {
-        usernames[i]: {
-            "name": names[i],
-            "password": hashed_passwords[i]
+        "admin": {
+            "name": "Admin",
+            "password": "admin123"
+        },
+        "moderator": {
+            "name": "Moderator",
+            "password": "mod123"
         }
-        for i in range(len(usernames))
     }
 }
+
 authenticator = stauth.Authenticate(
     credentials,
     "toxitrend_cookie",
